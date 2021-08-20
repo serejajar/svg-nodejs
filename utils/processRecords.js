@@ -1,4 +1,6 @@
-const DutyStatus {
+import { startOfDay } from 'date-fns';
+
+const DutyStatus = {
   Dr: 'Dr',
   Off: 'Off',
   On: 'On',
@@ -7,7 +9,7 @@ const DutyStatus {
   Ym: 'Ym'
 }
 
-function getPosX(timestamp: number): number {
+function getPosX(timestamp) {
   const tzOffset = new Date().getTimezoneOffset() / 60;
   const startDayTs = startOfDay(timestamp * 1000).getTime() / 1000;
   return (timestamp - startDayTs) / 3600 + tzOffset;
@@ -30,7 +32,7 @@ function getPosY(dutyStatus) {
   }
 }
 
-const processRecords = (records]) => {
+const processRecords = (records) => {
   return records.map((record) => {
     const y = getPosY(record.dutyStatus);
     const x = getPosX(record.timestamp);

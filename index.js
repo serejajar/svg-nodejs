@@ -1,9 +1,9 @@
 
 import { JSDOM } from 'jsdom';
 import * as d3 from 'd3';
-import startOfDay from 'date-fns/startOfDay';
 
 import renderBgGrid from './utils/renderBgGrid.js';
+import processRecords from './utils/processRecords.js';
 
 import {
   HEIGHT,
@@ -25,15 +25,17 @@ function renderGraph(data) {
   const height = HEIGHT + MARGIN.top + MARGIN.bottom;
   const width = WIDTH + MARGIN.left + MARGIN.right;
 
+  const body = dom.window.document.querySelector('body');
+
   const svg = d3
-    .select(dom.window.document.querySelector("body"))
+    .select(dom.window.document.querySelector('body'))
     .append('svg')
     .attr('viewBox', `0 0 ${width} ${height}`)
     .attr('preserveAspectRatio', 'xMinYMin meet')
     // .attr('width', width)
     // .attr('height', height)
     .append('g')
-    .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
+    // .attr('transform', `translate(${MARGIN.left},${MARGIN.top})`);
 
   const scale = {
     x: d3.scaleLinear().domain([0, COLS]).range([0, WIDTH]),
@@ -81,6 +83,8 @@ function renderGraph(data) {
     .attr('height', scale.y(0));
 
   renderLines(svg, scale, data);
+
+  console.log(body.innerHTML);
 }
 
 function renderLines(svg, scale, data) {
