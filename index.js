@@ -1,5 +1,7 @@
-
+import fs from 'fs';
 import { JSDOM } from 'jsdom';
+import SVGtoPDF from 'svg-to-pdfkit';
+import PDFDocument from 'pdfkit';
 import * as d3 from 'd3';
 
 import renderBgGrid from './utils/renderBgGrid.js';
@@ -17,8 +19,23 @@ import data from './mocks/data.js';
 
 
 
-renderGraph(data);
+const svg = renderGraph(data);
 
+const options = {
+  width: 1050,
+  height: 168,
+  preserveAspectRatio: 'xMinYMin meet',
+  useCSS: true,
+  assumePt: true
+};
+const doc = new PDFDocument();
+
+SVGtoPDF(doc, svg, 0, 0, options);
+
+doc.pipe(fs.createWriteStream('output.pdf'));
+doc.end();
+
+// svg
 function renderGraph(data) {
   const dom = new JSDOM(`<!DOCTYPE html><body></body>`);
 
@@ -84,7 +101,7 @@ function renderGraph(data) {
 
   renderLines(svg, scale, data);
 
-  console.log(body.innerHTML);
+  return dom.window.document.querySelector('svg');
 }
 
 function renderLines(svg, scale, data) {
