@@ -1,7 +1,6 @@
 import fs from 'fs';
 import { JSDOM } from 'jsdom';
-import SVGtoPDF from 'svg-to-pdfkit';
-import PDFDocument from 'pdfkit';
+import SVGtoPNG from 'convert-svg-to-png';
 import * as d3 from 'd3';
 
 import renderBgGrid from './utils/renderBgGrid.js';
@@ -17,35 +16,19 @@ import {
 
 import data from './mocks/data.js';
 
-
-
 const svg = renderGraph(data);
 
-const options = {
-  width: 1050,
-  height: 168,
-  preserveAspectRatio: 'xMinYMin meet',
-  useCSS: true,
-  assumePt: true
-};
-const doc = new PDFDocument();
+console.log(svg);
 
-SVGtoPDF(doc, svg, 0, 0, options);
-
-doc.pipe(fs.createWriteStream('output.pdf'));
-doc.end();
-
-// svg
 function renderGraph(data) {
   const dom = new JSDOM(`<!DOCTYPE html><body></body>`);
+  const body = dom.window.document.querySelector('body');
 
   const height = HEIGHT + MARGIN.top + MARGIN.bottom;
   const width = WIDTH + MARGIN.left + MARGIN.right;
 
-  const body = dom.window.document.querySelector('body');
-
   const svg = d3
-    .select(dom.window.document.querySelector('body'))
+    .select(body)
     .append('svg')
     .attr('viewBox', `0 0 ${width} ${height}`)
     .attr('preserveAspectRatio', 'xMinYMin meet')
@@ -101,7 +84,7 @@ function renderGraph(data) {
 
   renderLines(svg, scale, data);
 
-  return dom.window.document.querySelector('svg');
+  return body.innerHTML;
 }
 
 function renderLines(svg, scale, data) {
